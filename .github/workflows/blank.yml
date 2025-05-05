@@ -38,5 +38,6 @@ jobs:
           git commit -m "MTF data added for $(date -d '7 days ago' +'%d-%b-%Y')" || echo "No changes to commit"
           git push
 
+
           git commit -m "MTF data added for $(date -d '7 days ago' +'%d-%b-%Y')" || echo "No changes to commit"
           git push
