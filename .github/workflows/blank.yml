@@ -1,43 +1,40 @@
-name: Auto Import NSE MTF (1-week lag)
+name: Daily NSE MTF Fetch & Upload
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # Runs every day at 00:00 UTC
-  workflow_dispatch:
+    - cron: '0 2 * * *'  # Runs daily at 2 AM UTC
+  workflow_dispatch:     # Allows manual trigger
 
 jobs:
   fetch-and-upload:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v2
+    - name: ⬇️ Checkout repo
+      uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.10'
+    - name: 🐍 Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
 
-      - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
+    - name: 📦 Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
 
-      - name: Fetch MTF CSV from NSE
-        run: python fetch_csv.py
+    - name: 📥 Run fetch_csv.py
+      run: python fetch_csv.py
 
-      - name: Process CSV and Upload to Google Sheets
-        env:
-          GOOGLE_SHEETS_CREDENTIALS: ${{ secrets.GOOGLE_SHEETS_CREDENTIALS }}
-        run: python process_and_upload.py
+    - name: ☁️ Commit new data if any
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
+        git add data/
+        git diff --quiet && git diff --staged --quiet || git commit -m "🔄 Add new MTF CSV data"
+        git push
 
-      - name: Commit CSV to Repository
-        run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git add data/
-          git commit -m "MTF data added for $(date -d '7 days ago' +'%d-%b-%Y')" || echo "No changes to commit"
-          git push
-
-
-          git commit -m "MTF data added for $(date -d '7 days ago' +'%d-%b-%Y')" || echo "No changes to commit"
-          git push
+    - name: 📊 Upload to Google Sheets
+      env:
+        GOOGLE_SHEETS_CREDENTIALS: ${{ secrets.GOOGLE_SHEETS_CREDENTIALS }}
+      run: python process_and_upload.py
