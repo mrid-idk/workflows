@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
 
-SHEET_ID = "your_google_sheet_id_here"
+SHEET_ID = "https://docs.google.com/spreadsheets/d/1CYPLuS86Gqch8tutw_WcKVuV-gxaJpzW4zd5T6qKH9c/edit?pli=1&gid=0#gid=0"
 SHEET_RANGE = "Sheet1!A1"
 
 def get_lag_date():
