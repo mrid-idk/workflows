@@ -20,7 +20,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install requests google-api-python-client google-auth google-auth-httplib2 google-auth-oauthlib
+          pip install -r requirements.txt
 
       - name: Fetch MTF CSV from NSE
         run: python fetch_csv.py
@@ -35,5 +35,8 @@ jobs:
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git add data/
+          git commit -m "MTF data added for $(date -d '7 days ago' +'%d-%b-%Y')" || echo "No changes to commit"
+          git push
+
           git commit -m "MTF data added for $(date -d '7 days ago' +'%d-%b-%Y')" || echo "No changes to commit"
           git push
